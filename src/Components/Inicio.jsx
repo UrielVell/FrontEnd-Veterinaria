@@ -2,8 +2,8 @@ import { Box, Fab, Tooltip, Dialog, DialogTitle, DialogContent, DialogContentTex
 import AddIcon from '@mui/icons-material/Add';
 import AppBar from "./AppBar";
 import Tabla from "./Tabla";
-import DialogoEditar from './DialogEditar'
 import TextField from '@mui/material/TextField'
+
 
 import { useForm } from 'react-hook-form'
 
@@ -11,20 +11,31 @@ import './Inicio.css'
 
 import { useNavigate } from 'react-router-dom';
 import React from "react";
+import axios from 'axios';
+import { blue } from "@mui/material/colors";
+
+
 
 function Inicio() {
     const navigate = useNavigate()
 
-    const [filaSeleccionada, setFilaSeleccionada] = React.useState({
-        id: null,
-        nombreMascota: null,
-        tipoMascota: null,
-        motivo: null,
-        nombreDueno: null,
-        telefono: null,
-      });
+    const [filaSeleccionada, setFilaSeleccionada] = React.useState([{}]);
 
-    const { register, handleSubmit, formState: { errors } } = useForm()
+    const { register, handleSubmit } = useForm()
+
+    const [datos, setData] = React.useState([{}])
+
+    const cargarDatos = async () => {
+
+        axios.get('http://localhost:4567/api/animales/get').then((respuesta) => {
+            console.log(respuesta.data)
+            setData(respuesta.data)
+        })
+    }
+
+    React.useEffect(() => {
+        cargarDatos()
+    }, [])
 
     const irAgregar = () => {
         navigate('/agregarMascota')
@@ -38,11 +49,32 @@ function Inicio() {
         setOpen(false)
     }
 
-    const editar = (datosFila) => {
+    const verInfo = (datosFila) => {
         setFilaSeleccionada(datosFila)
         console.log("Fila actualizada:", filaSeleccionada);
         abrir()
-       
+    }
+
+    const editarInfo = (data) => {
+        console.log("accion de editar")
+        axios.put('http://localhost:4567/api/animales/change', {
+            id: filaSeleccionada.id,
+            nombre: data.nombreMascota,
+            especie: data.tipoMascota,
+            motivo: data.motivo,
+            id_Dueño: '1234'
+        }).then(() => {
+            setOpen(false)
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+
+    const eliminarAnimal = () => {
+        // axios.delete('http://localhost:4567/api/animales/remove/',  filaSeleccionada.id).then(() => {
+        //     setOpen(false)
+        // })
+        console.log(filaSeleccionada.id)
     }
 
     return (
@@ -50,7 +82,7 @@ function Inicio() {
             <AppBar index="¡Bienvenido!" />
 
             <Box>
-                <Tabla opcionEditar={editar}></Tabla>
+                <Tabla opcionVer={verInfo} data={datos} ></Tabla>
             </Box>
 
             <Box sx={{ paddingTop: 3, width: 50, alignContent: 'end' }}>
@@ -65,56 +97,49 @@ function Inicio() {
                     </DialogTitle>
                     <DialogContent>
                         <>
-                            <TextField
-                                id="id"
-                                {...register("id",)}
-                                label="id"
-                                variant="standard" fullWidth
-                                disabled
-                                value={filaSeleccionada ? filaSeleccionada.id : ''} 
-                                />
-                            <TextField
-                                id="nombreMascota"
-                                {...register("nombreMascota", { required: 'Ingrese un nombre.' })}
-                                label="Nombre de la mascota"
-                                variant="standard" fullWidth
-                                value={filaSeleccionada ? filaSeleccionada.nombreMascota : ''} 
-                                onChange={(e) => setValue("nombreMascota", e.target.value)} />
-                            <TextField
-                                id="tipoMascota"
-                                {...register("tipoMascota", { required: 'Ingrese un tipo de mascota.' })}
-                                label="Tipo de Mascota"
-                                variant="standard" fullWidth
-                                value={filaSeleccionada ? filaSeleccionada.tipoMascota : ''}  />
-                            <TextField
-                                id="motivo"
-                                {...register("motivo", { required: 'Ingrese un motivo de visita.' })}
-                                multiline
-                                label="Padecimiento/Motivo de visita"
-                                variant="standard"
-                                fullWidth
-                                value={filaSeleccionada ? filaSeleccionada.motivo : ''} />
-                            <TextField
-                                id="nombreDueno"
-                                {...register("nombreDueno", { required: 'Ingrese el nombre del dueño.' })}
-                                label="Nombre del dueño"
-                                variant="standard"
-                                fullWidth
-                                value={filaSeleccionada ? filaSeleccionada.nombreDueno : ''}  />
-                            <TextField id="telefono"
-                                {...register("telefono", {
-                                    required: 'Ingrese un numero de telefono.',
-                                    maxLength: { value: 10, message: 'Numero de telefono incorrecto.' },
-                                    pattern: { value: /^[0-9]*$/, message: 'Ingrese solo números' }
-                                })}
-                                label="Telefono de contacto" variant="standard"
-                                fullWidth
-                                value={filaSeleccionada ? filaSeleccionada.telefono : ''}  />
+                            <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+                                <Box>
+                                    <p >ID de la mascota: {filaSeleccionada.id}</p>
+                                    <p >Nombre de la mascota: {filaSeleccionada.nombre}</p>
+                                    <p >Tipo de mascota: {filaSeleccionada.especie}</p>
+                                    <p >Motivo de visita: {filaSeleccionada.motivo}</p>
+                                </Box>
+                                <Box sx={{ width: '50%' }}>
+                                    <TextField
+                                        id="nombreMascota"
+                                        {...register("nombreMascota", { required: 'Ingrese un nombre.' })}
+                                        label="Nombre de la mascota"
+                                        variant="standard"
+                                        fullWidth
+                                    />
+                                    <TextField
+                                        id="tipoMascota"
+                                        {...register("tipoMascota", { required: 'Ingrese un tipo de mascota.' })}
+                                        label="Tipo de Mascota"
+                                        variant="standard"
+                                        fullWidth
+                                    />
+                                    <TextField
+                                        id="motivo"
+                                        {...register("motivo", { required: 'Ingrese un motivo de visita.' })}
+                                        multiline
+                                        label="Padecimiento/Motivo de visita"
+                                        variant="standard"
+                                        fullWidth
+                                    />
+                                </Box>
+                            </Box>
                         </>
                     </DialogContent>
                     <DialogActions>
-                        <Button color="error" onClick={cerrar}>
-                            Cancelar
+                        <Button color="error" variant="text" onClick={cerrar}>
+                            Cerrar
+                        </Button>
+                        <Button color="error" variant="contained" onClick={eliminarAnimal}>
+                            Eliminar
+                        </Button>
+                        <Button color="primary" variant="contained" onClick={handleSubmit(editarInfo)}>
+                            Editar
                         </Button>
                     </DialogActions>
                 </Dialog>

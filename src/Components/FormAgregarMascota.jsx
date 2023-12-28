@@ -7,8 +7,6 @@ import Button from '@mui/material/Button'
 import PetsIcon from '@mui/icons-material/Pets';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import PersonIcon from '@mui/icons-material/Person';
-import PhoneIcon from '@mui/icons-material/Phone';
 import AppBar from './AppBar';
 import { Snackbar, Alert } from '@mui/material';
 
@@ -17,6 +15,7 @@ import Fab from '@mui/material/Fab'
 
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form'
+import axios from 'axios';
 
 function FormAgregarMascota() {
     const navigate = useNavigate()
@@ -38,10 +37,24 @@ function FormAgregarMascota() {
     }
 
     const enviarForm = (data) => {
-        alert(data.nombreMascota)
-        setOpen(true)
-        navigate('/inicio')
+        axios.post('http://localhost:4567/api/animales/add', {
+            nombre: data.nombreMascota,
+            especie: data.tipoMascota,
+            motivo: data.motivo,
+            id_Dueño: '1234'
+        }).then(() => {
+            setOpen(true)
+            navigate('/inicio')
+        }).catch((error) => {
+            setAlerta("error")
+            setMensaje("Error al agregar mascota")
+            setOpen(true)
+            console.log(error);
+        })
+
     }
+
+
 
     return (
         <>
@@ -90,31 +103,6 @@ function FormAgregarMascota() {
                     <p role='alert'>{errors.motivo?.message}</p>
                 </fieldset>
 
-                <fieldset id='formDueno'>
-                    <legend id='legendDueno'>Dueño</legend>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-                        <PersonIcon sx={{ mr: 1, my: 0.5 }} />
-                        <TextField
-                            id="nombreDueno"
-                            {...register("nombreDueno", { required: 'Ingrese el nombre del dueño.' })}
-                            label="Nombre del dueño"
-                            variant="standard"
-                            fullWidth />
-                    </Box>
-                    <p role='alert'>{errors.nombreDueno?.message}</p>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-                        <PhoneIcon sx={{ mr: 1, my: 0.5 }} />
-                        <TextField id="telefono"
-                            {...register("telefono", {
-                                required: 'Ingrese un numero de telefono.',
-                                maxLength: { value: 10, message: 'Numero de telefono incorrecto.' },
-                                pattern: { value: /^[0-9]*$/, message: 'Ingrese solo números' }
-                            })}
-                            label="Telefono de contacto" variant="standard"
-                            fullWidth />
-                    </Box>
-                    <p role='alert'>{errors.telefono?.message}</p>
-                </fieldset>
                 <Box sx={{ display: 'flex', alignItems: 'flex-end', marginTop: 3 }}>
                     <Button variant="contained" id='btnInicioSesion' type='submit' size='large'>
                         Agregar

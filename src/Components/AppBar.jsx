@@ -29,7 +29,7 @@ function TopBar({ index }) {
 
   return (
     <>
-      <AppBar position="fixed" sx={{ backgroundColor: '#2A6041' }}>
+      <AppBar position="fixed" sx={{ backgroundColor: '#2A6041'}}>
         <Toolbar>
           <Avatar
             alt="Logo Veterinaria"
