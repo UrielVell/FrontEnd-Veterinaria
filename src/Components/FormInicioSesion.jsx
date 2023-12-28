@@ -10,6 +10,7 @@ import Alert from '@mui/material/Alert';
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom';
 import './InicioSesion.css'
+import { useState } from 'react';
 
 import axios from 'axios';
 
@@ -26,8 +27,10 @@ function FormularioInicioSesion() {
         }
         setOpen(false)
     }
-
-    const usuario = { id: '12345'}
+    const [usuario, setDatosUsuario] = useState({
+        nombre: 'david',
+        password: '1234'
+    });
 
     const [alerta, setAlerta] = React.useState("success")
     const [mensaje, setMensaje] = React.useState("Bienvenido")
@@ -39,7 +42,7 @@ function FormularioInicioSesion() {
             const respuesta = await peticion()
             console.log(data)
             console.log(respuesta)
-            if (data.nombreUsuario == respuesta.nombre && data.contraUsuario == respuesta.password) {
+            if (respuesta == true) {
                 console.log("Usuario correcto")
                 setOpen(true)
                 iniciarSesion()
@@ -58,7 +61,7 @@ function FormularioInicioSesion() {
 
     const peticion = async () => {
         try {
-            const respuesta = await axios.get('http://localhost:4567/api/clientes/getById/',usuario)
+            const respuesta = await axios.post('http://localhost:4567/api/clientes/auth',usuario)
             return respuesta.data
         } catch (error) {
             throw error
@@ -68,6 +71,14 @@ function FormularioInicioSesion() {
     const iniciarSesion = () => {
         navigate('/inicio')
     }
+
+    const cambiosFormulario = (e) => {
+        const {name,value} = e.target
+        setDatosUsuario({
+            ...usuario,
+            [name]: value
+        })
+    } 
 
     return (
         <>
@@ -85,12 +96,12 @@ function FormularioInicioSesion() {
 
                 <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
                     <AccountCircle sx={{ mr: 1, my: 0.5 }} />
-                    <TextField {...register("nombreUsuario", { required: 'Ingrese un usuario.' })} label="Nombre de usuario" variant="standard" />
+                    <TextField {...register("nombre", { required: 'Ingrese un usuario.' })} label="Nombre de usuario" variant="standard" onChange={cambiosFormulario} />
                 </Box>
                 <p role='alert'>{errors.nombreUsuario?.message}</p>
                 <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
                     <HttpsIcon sx={{ mr: 1, my: 0.5 }} />
-                    <TextField {...register("contraUsuario", { required: 'Ingrese una contraseña', minLength: { value: 5, message: 'La contraseña debe de ser de 5 o mas caracteres.' } })} label="Contraseña" variant="standard" type='password' />
+                    <TextField {...register("password", { required: 'Ingrese una contraseña', minLength: { value: 5, message: 'La contraseña debe de ser de 5 o mas caracteres.' } })} label="Contraseña" variant="standard" type='password' onChange={cambiosFormulario} />
                 </Box>
                 <p role='alert'>{errors.contraUsuario?.message}</p>
                 <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
