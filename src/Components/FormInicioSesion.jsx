@@ -61,7 +61,7 @@ function FormularioInicioSesion() {
 
     const peticion = async () => {
         try {
-            const respuesta = await axios.post('http://localhost:4567/api/clientes/auth',usuario)
+            const respuesta = await axios.post('https://pruebajar-production.up.railway.app/api/clientes/auth',usuario)
             return respuesta.data
         } catch (error) {
             throw error

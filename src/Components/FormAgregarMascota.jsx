@@ -37,7 +37,7 @@ function FormAgregarMascota() {
     }
 
     const enviarForm = (data) => {
-        axios.post('http://localhost:4567/api/animales/add', {
+        axios.post('https://pruebajar-production.up.railway.app/api/animales/add', {
             nombre: data.nombreMascota,
             especie: data.tipoMascota,
             motivo: data.motivo,

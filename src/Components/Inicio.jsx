@@ -12,7 +12,6 @@ import './Inicio.css'
 import { useNavigate } from 'react-router-dom';
 import React from "react";
 import axios from 'axios';
-import { blue } from "@mui/material/colors";
 
 
 
@@ -27,7 +26,7 @@ function Inicio() {
 
     const cargarDatos = async () => {
 
-        axios.get('http://localhost:4567/api/animales/get').then((respuesta) => {
+        axios.get('https://pruebajar-production.up.railway.app/api/animales/get').then((respuesta) => {
             console.log(respuesta.data)
             setData(respuesta.data)
         })
@@ -57,7 +56,7 @@ function Inicio() {
 
     const editarInfo = (data) => {
         console.log("accion de editar")
-        axios.put('http://localhost:4567/api/animales/change', {
+        axios.put('https://pruebajar-production.up.railway.app/api/animales/change', {
             id: filaSeleccionada.id,
             nombre: data.nombreMascota,
             especie: data.tipoMascota,
@@ -72,7 +71,7 @@ function Inicio() {
     }
 
     const eliminarAnimal = () => {
-        axios.delete('http://localhost:4567/api/animales/remove/'+filaSeleccionada.id).then(() => {
+        axios.delete('https://pruebajar-production.up.railway.app/api/animales/remove/'+filaSeleccionada.id).then(() => {
             setOpen(false)
             cargarDatos()
         })
