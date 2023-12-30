@@ -1,0 +1,4 @@
+[[redirects]]
+    from = "/inicio"
+    to = "/src/Components/Inicio.jsx"
+    status = 200
