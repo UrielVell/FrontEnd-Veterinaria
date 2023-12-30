@@ -65,16 +65,17 @@ function Inicio() {
             id_Dueño: '1234'
         }).then(() => {
             setOpen(false)
+            cargarDatos()
         }).catch((error) => {
             console.log(error);
         })
     }
 
     const eliminarAnimal = () => {
-        // axios.delete('http://localhost:4567/api/animales/remove/',  filaSeleccionada.id).then(() => {
-        //     setOpen(false)
-        // })
-        console.log(filaSeleccionada.id)
+        axios.delete('http://localhost:4567/api/animales/remove/'+filaSeleccionada.id).then(() => {
+            setOpen(false)
+            cargarDatos()
+        })
     }
 
     return (
