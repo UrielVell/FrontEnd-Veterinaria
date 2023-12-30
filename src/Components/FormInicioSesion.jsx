@@ -98,12 +98,12 @@ function FormularioInicioSesion() {
                     <AccountCircle sx={{ mr: 1, my: 0.5 }} />
                     <TextField {...register("nombre", { required: 'Ingrese un usuario.' })} label="Nombre de usuario" variant="standard" onChange={cambiosFormulario} />
                 </Box>
-                <p role='alert'>{errors.nombreUsuario?.message}</p>
+                <p role='alert'>{errors.nombre?.message}</p>
                 <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
                     <HttpsIcon sx={{ mr: 1, my: 0.5 }} />
                     <TextField {...register("password", { required: 'Ingrese una contraseña', minLength: { value: 5, message: 'La contraseña debe de ser de 5 o mas caracteres.' } })} label="Contraseña" variant="standard" type='password' onChange={cambiosFormulario} />
                 </Box>
-                <p role='alert'>{errors.contraUsuario?.message}</p>
+                <p role='alert'>{errors.password?.message}</p>
                 <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
                     <Button variant="contained" id='btnInicioSesion' type='submit' >
                         Ingresar
